@@ -1,0 +1,80 @@
+version: '3'
+
+# Cada servicio es una imagen de docker, cada 
+# servicio será un contenedor cuando se despliegue 
+# el docker-compose.
+services:
+
+  back_mongodb:
+    container_name: bills_road__back_mongodb
+    image: mongo:6.0.2
+    restart: always
+    env_file: ./.env
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=$DB_USER
+      - MONGO_INITDB_ROOT_PASSWORD=$DB_PASSWORD
+      - MONGO_INITDB_DATABASE=bills_road
+    ports:
+      - $DB_PORT:$DB_PORT
+    volumes:
+      - ./init-mongodb.js:/docker-entrypoint-initdb.d/init-mongodb.js:ro
+    networks:
+      bills_road:
+        ipv4_address: $DB_HOST
+
+  back_django:
+    container_name: bills_road__back_django
+    build: ./backend
+    restart: always
+    depends_on:
+      - back_mongodb
+    env_file: ./.env
+    environment:
+      - DB_PORT=$DB_PORT
+      - DB_HOST=$DB_HOST
+      - DB_USER=$DB_USER
+      - DB_PASSWORD=$DB_PASSWORD
+      - DB_NAME=$DB_NAME
+      - ACCESS_TOKEN_LIFETIME=$ACCESS_TOKEN_LIFETIME
+      - REFRESH_TOKEN_LIFETIME=$REFRESH_TOKEN_LIFETIME
+      - SEND_EMAIL_USER=$SEND_EMAIL_USER
+      - SEND_EMAIL_PASSWORD=$SEND_EMAIL_PASSWORD
+      - FRONT_ORIGIN=*
+      - BACK_INTERNAL_PORT=$BACK_INTERNAL_PORT
+    ports:
+      - $BACK_EXTERNAL_PORT:$BACK_INTERNAL_PORT
+    volumes:
+      - ./backend:/usr/src/app
+    networks:
+      bills_road:
+        ipv4_address: $BACK_HOST
+
+  front_react:
+    container_name: bills_road__front
+    build: ./frontend
+    env_file: ./.env
+    environment:
+      - PORT=$FRONT_INTERNAL_PORT
+      - ACCESS_TOKEN_LIFETIME=$ACCESS_TOKEN_LIFETIME
+      - BACK_HOST=$BACK_HOST
+      - BACK_INTERNAL_PORT=$BACK_INTERNAL_PORT
+      - BACKEND_SERVER="here we need to enter backend server"
+    restart: always
+    depends_on:
+      - back_django
+    ports:
+      - $FRONT_EXTERNAL_PORT:$FRONT_INTERNAL_PORT
+    volumes:
+      - ./frontend:/usr/src/app
+    networks:
+      bills_road:
+        ipv4_address: $FRONT_HOST
+
+networks:
+  bills_road:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 10.5.0.0/16
+          gateway: 10.5.0.1
+

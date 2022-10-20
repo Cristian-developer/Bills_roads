@@ -1,0 +1,36 @@
+.XCard {
+  width: 25rem;
+  height: 25rem;
+  background-color: white;
+  border-radius: 25px;
+}
+
+.XCard:hover {
+  box-shadow: 5px 10px 20px 1px rgba(255, 255, 255, 0.273) !important;
+  transition: all 0.7s linear;
+}
+
+.XCard-body {
+  padding: 2rem 0 !important;
+}
+
+.XCard-text {
+  padding: 0.3rem 1rem;
+  font-size: 1rem;
+  font-family: Cocogoose;
+  color: var(--color1);
+}
+
+.XCard-title {
+  color: var(--color1);
+  font-size: 1.25rem;
+  font-family: Cocogoose;
+}
+
+.overflow {
+  overflow: hidden;
+}
+
+.XCardIcon {
+  width: 110px;
+}
