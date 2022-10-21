@@ -11,13 +11,13 @@ import ImgProfile from "../img/man.png"
 import CardImg from "../img/servicio-de-auto.png"
 import Cards from "../components/Cards"
 
-export const ViewAllPlacesPage = () => {
+export const ViewPlacesPage = () => {
   const { user, authTokens } = useContext(AuthContext)
   const [cards, setCards] = useState([])
 
   const navigate = useNavigate()
   const AddPlace = () => {
-    let path = `/add/place`
+    let path = `/add_place`
     navigate(path)
   }
 
