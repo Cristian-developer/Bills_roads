@@ -28,7 +28,7 @@ def get_places(request):
     return JsonResponse({}, safe=False, headers=headers, status=405)
 
 
-# @api_view(['POST', 'OPTIONS'])
+@api_view(['POST', 'OPTIONS'])
 @csrf_exempt
 @permission_classes([IsAdminUser])
 def create_place(request):
